@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>DarkNet Chat | Anonymous Forum</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Auth Screen -->
+        <div id="auth-screen" class="screen active">
+            <div class="auth-container">
+                <div class="logo">
+                    <i class="fas fa-skull"></i>
+                    <h1>DARK<span>NET</span></h1>
+                    <p class="subtitle">Anonymous Communication Network</p>
+                </div>
+
+                <div class="auth-tabs">
+                    <button class="tab-btn active" data-tab="login">LOGIN</button>
+                    <button class="tab-btn" data-tab="register">REGISTER</button>
+                </div>
+
+                <div class="auth-forms">
+                    <form id="login-form" class="auth-form active">
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="login-username" placeholder="Username" required autocomplete="username">
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="login-password" placeholder="Password" required autocomplete="current-password">
+                        </div>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> ACCESS SYSTEM
+                        </button>
+                    </form>
+
+                    <form id="register-form" class="auth-form">
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="reg-username" placeholder="Username" required autocomplete="username">
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-id-card"></i>
+                            <input type="text" id="reg-display" placeholder="Display Name" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="reg-password" placeholder="Password" required autocomplete="new-password">
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="reg-password-confirm" placeholder="Confirm Password" required autocomplete="new-password">
+                        </div>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-user-plus"></i> CREATE IDENTITY
+                        </button>
+                    </form>
+                </div>
+
+                <div class="auth-footer">
+                    <p>Project: ShadowKeep v2.0</p>
+                    <p class="warning">All communications are monitored</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main App Screen -->
+        <div id="main-screen" class="screen">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-left">
+                    <button id="menu-toggle" class="icon-btn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="brand">
+                        <i class="fas fa-skull"></i>
+                        <span>DARKNET</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button id="status-btn" class="status-indicator">
+                        <span class="status-dot"></span>
+                        <span class="status-text">ONLINE</span>
+                    </button>
+                    <button id="notif-btn" class="icon-btn">
+                        <i class="fas fa-bell"></i>
+                        <span id="notif-count" class="badge">0</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Sidebar -->
+            <nav id="sidebar" class="sidebar">
+                <div class="sidebar-header">
+                    <div class="user-avatar">
+                        <img id="sidebar-avatar" src="/uploads/default-avatar.png" alt="Avatar">
+                        <span class="online-indicator"></span>
+                    </div>
+                    <div class="user-info">
+                        <h3 id="sidebar-name">User</h3>
+                        <p id="sidebar-username">@user</p>
+                        <p id="sidebar-pin" class="pin-code">PIN: ----</p>
+                    </div>
+                </div>
+
+                <div class="sidebar-nav">
+                    <button class="nav-item active" data-view="chat">
+                        <i class="fas fa-comments"></i>
+                        <span>Private Chat</span>
+                        <span id="chat-badge" class="nav-badge">0</span>
+                    </button>
+                    <button class="nav-item" data-view="forum">
+                        <i class="fas fa-globe"></i>
+                        <span>Public Forum</span>
+                        <span id="forum-badge" class="nav-badge">0</span>
+                    </button>
+                    <button class="nav-item" data-view="connections">
+                        <i class="fas fa-network-wired"></i>
+                        <span>Connections</span>
+                    </button>
+                    <button class="nav-item" data-view="profile">
+                        <i class="fas fa-user-secret"></i>
+                        <span>Profile</span>
+                    </button>
+                    <button class="nav-item" data-view="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </button>
+                </div>
+
+                <div class="sidebar-footer">
+                    <button id="logout-btn" class="btn-danger">
+                        <i class="fas fa-power-off"></i> DISCONNECT
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Overlay for mobile -->
+            <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <!-- Private Chat View -->
+                <div id="chat-view" class="view active">
+                    <div class="view-header">
+                        <h2><i class="fas fa-comments"></i> Private Communications</h2>
+                        <button id="new-chat-btn" class="btn-secondary">
+                            <i class="fas fa-plus"></i> New Connection
+                        </button>
+                    </div>
+
+                    <div class="chat-layout">
+                        <div class="chat-sidebar">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="chat-search" placeholder="Search connections...">
+                            </div>
+                            <div id="chat-list" class="chat-list">
+                                <!-- Dynamic content -->
+                            </div>
+                        </div>
+
+                        <div class="chat-area">
+                            <div id="chat-placeholder" class="chat-placeholder">
+                                <i class="fas fa-comments"></i>
+                                <p>Select a connection to start secure communication</p>
+                            </div>
+
+                            <div id="active-chat" class="active-chat hidden">
+                                <div class="chat-header">
+                                    <div class="chat-user-info">
+                                        <img id="chat-avatar" src="" alt="">
+                                        <div>
+                                            <h3 id="chat-name">User</h3>
+                                            <p id="chat-status" class="status-text">offline</p>
+                                        </div>
+                                    </div>
+                                    <button id="chat-options" class="icon-btn">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                </div>
+
+                                <div id="messages-container" class="messages-container">
+                                    <!-- Messages here -->
+                                </div>
+
+                                <div class="chat-input-area" id="chat-input-area">
+                                    <button id="attach-btn" class="icon-btn" type="button">
+                                        <i class="fas fa-paperclip"></i>
+                                    </button>
+                                    <input type="file" id="file-input" hidden accept="image/*,video/*,.pdf,.doc,.docx,.txt">
+                                    <div class="input-wrapper">
+                                        <input type="text" id="message-input" placeholder="Type encrypted message..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                                    </div>
+                                    <button id="send-btn" class="btn-send" type="button">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Forum View -->
+                <div id="forum-view" class="view">
+                    <div class="view-header">
+                        <h2><i class="fas fa-globe"></i> Public Forum</h2>
+                        <button id="new-post-btn" class="btn-secondary">
+                            <i class="fas fa-plus"></i> New Thread
+                        </button>
+                    </div>
+
+                    <div class="forum-controls">
+                        <div class="category-filter">
+                            <button class="cat-btn active" data-cat="all">All</button>
+                            <button class="cat-btn" data-cat="general">General</button>
+                            <button class="cat-btn" data-cat="tech">Tech</button>
+                            <button class="cat-btn" data-cat="security">Security</button>
+                            <button class="cat-btn" data-cat="market">Market</button>
+                            <button class="cat-btn" data-cat="offtopic">Off-Topic</button>
+                        </div>
+                    </div>
+
+                    <div id="forum-posts" class="forum-posts">
+                        <!-- Dynamic posts -->
+                    </div>
+                </div>
+
+                <!-- Connections View -->
+                <div id="connections-view" class="view">
+                    <div class="view-header">
+                        <h2><i class="fas fa-network-wired"></i> Network Connections</h2>
+                        <button id="add-connection-btn" class="btn-secondary">
+                            <i class="fas fa-plus"></i> Add by PIN
+                        </button>
+                    </div>
+
+                    <!-- Pending Requests Section -->
+                    <div class="pending-requests-section" id="pending-requests-section">
+                        <div class="pending-requests-header">
+                            <h3><i class="fas fa-clock"></i> Pending Requests</h3>
+                            <span class="pending-badge" id="pending-count">0</span>
+                        </div>
+                        <div id="pending-requests-list">
+                            <div style="padding: 10px; color: var(--text-muted); text-align: center;">No pending requests</div>
+                        </div>
+                    </div>
+
+                    <div class="connections-grid" id="connections-grid">
+                        <!-- Dynamic connections -->
+                    </div>
+                </div>
+
+                <!-- Profile View -->
+                <div id="profile-view" class="view">
+                    <div class="profile-container">
+                        <div class="profile-header">
+                            <div class="profile-avatar-section">
+                                <div class="avatar-wrapper">
+                                    <img id="profile-avatar" src="/uploads/default-avatar.png" alt="Profile">
+                                    <button id="change-avatar-btn" class="avatar-overlay">
+                                        <i class="fas fa-camera"></i>
+                                    </button>
+                                </div>
+                                <input type="file" id="avatar-input" accept="image/*" hidden>
+                            </div>
+                            <div class="profile-info">
+                                <h2 id="profile-name">User Name</h2>
+                                <p id="profile-username">@username</p>
+                                <p id="profile-pin" class="pin-display">PIN: ----</p>
+                                <div class="profile-stats">
+                                    <div class="stat">
+                                        <span id="stat-connections">0</span>
+                                        <label>Connections</label>
+                                    </div>
+                                    <div class="stat">
+                                        <span id="stat-messages">0</span>
+                                        <label>Messages</label>
+                                    </div>
+                                    <div class="stat">
+                                        <span id="stat-posts">0</span>
+                                        <label>Posts</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="profile-form">
+                            <div class="form-group">
+                                <label>Display Name</label>
+                                <input type="text" id="profile-display-name" placeholder="Display Name">
+                            </div>
+                            <div class="form-group">
+                                <label>Bio</label>
+                                <textarea id="profile-bio" placeholder="Enter your bio..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Status Message</label>
+                                <input type="text" id="profile-status" placeholder="What's on your mind?">
+                            </div>
+                            <button id="save-profile-btn" class="btn-primary">
+                                <i class="fas fa-save"></i> Update Profile
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings View -->
+                <div id="settings-view" class="view">
+                    <div class="settings-container">
+                        <h2><i class="fas fa-cog"></i> System Settings</h2>
+
+                        <div class="settings-section">
+                            <h3>Security</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Change Password</h4>
+                                    <p>Update your access credentials</p>
+                                </div>
+                                <button id="change-password-btn" class="btn-secondary">Change</button>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>Appearance</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Theme</h4>
+                                    <p>Current: Dark Net</p>
+                                </div>
+                                <span class="badge-theme">DARK</span>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>System</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Version</h4>
+                                    <p>DarkNet Chat v2.0</p>
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Clear Data</h4>
+                                    <p>Clear all local cached data</p>
+                                </div>
+                                <button id="clear-data-btn" class="btn-danger">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Modals -->
+        <div id="modal-overlay" class="modal-overlay hidden">
+            <!-- New Chat Modal -->
+            <div id="new-chat-modal" class="modal hidden">
+                <div class="modal-header">
+                    <h3><i class="fas fa-plus"></i> New Connection</h3>
+                    <button class="modal-close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <p>Enter user's 8-digit PIN to establish secure connection:</p>
+                    <div class="pin-input-group">
+                        <input type="text" id="connect-pin" maxlength="8" placeholder="XXXXXXXX">
+                    </div>
+                    <button id="connect-submit" class="btn-primary">Connect</button>
+                </div>
+            </div>
+
+            <!-- New Post Modal -->
+            <div id="new-post-modal" class="modal hidden">
+                <div class="modal-header">
+                    <h3><i class="fas fa-plus"></i> New Thread</h3>
+                    <button class="modal-close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="post-category">
+                            <option value="general">General</option>
+                            <option value="tech">Technology</option>
+                            <option value="security">Security</option>
+                            <option value="market">Market</option>
+                            <option value="offtopic">Off-Topic</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="post-title" placeholder="Thread title...">
+                    </div>
+                    <div class="form-group">
+                        <label>Content</label>
+                        <textarea id="post-content" rows="6" placeholder="Enter your message..."></textarea>
+                    </div>
+                    <button id="post-submit" class="btn-primary">Publish</button>
+                </div>
+            </div>
+
+            <!-- Change Password Modal -->
+            <div id="password-modal" class="modal hidden">
+                <div class="modal-header">
+                    <h3><i class="fas fa-lock"></i> Change Password</h3>
+                    <button class="modal-close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Current Password</label>
+                        <input type="password" id="current-password" placeholder="Current password">
+                    </div>
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <input type="password" id="new-password" placeholder="New password">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm New Password</label>
+                        <input type="password" id="confirm-new-password" placeholder="Confirm password">
+                    </div>
+                    <button id="password-submit" class="btn-primary">Update Password</button>
+                </div>
+            </div>
+
+            <!-- Post Detail Modal -->
+            <div id="post-detail-modal" class="modal modal-large hidden">
+                <div class="modal-header">
+                    <h3 id="detail-title">Thread Title</h3>
+                    <button class="modal-close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div id="post-detail-content"></div>
+                    <div id="replies-section"></div>
+                    <div class="reply-form">
+                        <textarea id="reply-content" placeholder="Write a reply..."></textarea>
+                        <button id="reply-submit" class="btn-primary">Reply</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toast Notifications -->
+            <div id="toast-container" class="toast-container"></div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/app.js"></script>
+
+    <!-- Debug Panel (hidden by default, press F12 to see console logs) -->
+    <script>
+        // Debug helper
+        window.addEventListener('error', function(e) {
+            console.error('[GLOBAL ERROR]', e.message, 'at', e.filename, ':', e.lineno);
+        });
+
+        // Log all fetch requests
+        const originalFetch = window.fetch;
+        window.fetch = function() {
+            console.log('[FETCH]', arguments[0], arguments[1]);
+            return originalFetch.apply(this, arguments);
+        };
+    </script>
+</body>
+</html>
